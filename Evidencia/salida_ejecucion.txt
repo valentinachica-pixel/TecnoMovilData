@@ -1,0 +1,78 @@
+=== TecnoMovil Data - Procesamiento funcional de transporte urbano ===
+Usuarios simulados : 150.000
+Registros generados: 721.374 (semilla 2026)
+Ejemplo de registro: RegistroTransporte[idUsuario=U0004845, ruta=A1 - Alimentadora Loma, estacion=Barrio Nuevo, accion=ENTRADA, timestamp=2026-11-05T05:00]
+
+--- Inmutabilidad de la colecci├│n original ---
+  registros.add(...) -> UnsupportedOperationException (la lista es inmutable)
+
+--- a) Afluencia por estaci├│n (ingresos del d├¡a) ---
+  Parque Central         54.165
+  Plaza Mayor            48.980
+  Hospital               33.600
+  Universidad            31.344
+  Centro C├¡vico          28.514
+  Estadio                25.812
+  Mercado                22.437
+  Terminal Sur           20.376
+  Barrio Nuevo           18.113
+  Terminal Norte         17.839
+  Zona Industrial        12.086
+  Terminal Oriente       11.281
+  Biblioteca              9.039
+  Loma Alta               8.892
+  Tecnoparque             7.264
+  Puente R├¡o              6.159
+  Aeropuerto              4.786
+
+--- b) Horas pico (5 horas con mayor flujo) ---
+  07:00 - 07:59     60.013 ingresos
+  18:00 - 18:59     52.475 ingresos
+  17:00 - 17:59     44.879 ingresos
+  08:00 - 08:59     37.486 ingresos
+  06:00 - 06:59     37.455 ingresos
+
+--- c) Rutas m├ís utilizadas ---
+  T1 - Troncal Norte.Sur        108.140 ingresos
+  T2 - Troncal Oriente           90.086 ingresos
+  A1 - Alimentadora Loma         54.124 ingresos
+  E2 - Expreso Tecnoparque       43.125 ingresos
+  A2 - Alimentadora R├¡o          36.316 ingresos
+  E1 - Expreso Aeropuerto        28.896 ingresos
+
+--- d) Patrones de viaje por usuario (primeros 5 usuarios) ---
+  Usuarios con patr├│n calculado: 150.000
+  U0000000 : Estadio > Terminal Norte > Centro C├¡vico > Puente R├¡o > Parque Central > Tecnoparque
+  U0000001 : Terminal Oriente > Centro C├¡vico > Terminal Sur > Universidad
+  U0000002 : Hospital > Universidad > Terminal Sur > Plaza Mayor
+  U0000003 : Centro C├¡vico > Estadio > Universidad > Terminal Sur
+  U0000004 : Mercado > Plaza Mayor > Hospital > Plaza Mayor > Hospital > Puente R├¡o
+
+--- e) Tiempo promedio entre estaciones (8 tramos m├ís lentos) ---
+  Tramos distintos analizados: 90
+  Terminal Sur -> Terminal Norte          25,05 min
+  Terminal Norte -> Terminal Sur          24,99 min
+  Estadio -> Terminal Oriente             21,01 min
+  Terminal Oriente -> Estadio             21,01 min
+  Universidad -> Terminal Norte           21,01 min
+  Terminal Norte -> Universidad           21,00 min
+  Plaza Mayor -> Terminal Sur             17,90 min
+  Terminal Sur -> Parque Central          17,03 min
+
+--- f) Detecci├│n de sobrecarga en rutas (umbral = capacidad horaria simulada) ---
+  Ruta                       Hora pico     Ingresos    Umbral Ocupaci├│n  Estado
+  A2 - Alimentadora R├¡o      07:00-07:59      5.943     5.200    114,3%  CRITICA
+  E2 - Expreso Tecnoparque   07:00-07:59      7.172     6.500    110,3%  CRITICA
+  T2 - Troncal Oriente       07:00-07:59     15.029    14.000    107,4%  CRITICA
+  A1 - Alimentadora Loma     07:00-07:59      8.886     9.500     93,5%  NORMAL
+  T1 - Troncal Norte.Sur     07:00-07:59     18.210    20.000     91,1%  NORMAL
+  E1 - Expreso Aeropuerto    07:00-07:59      4.773     5.500     86,8%  NORMAL
+
+--- Comparaci├│n secuencial vs. parallelStream() ---
+  Tarea                                Secuencial     Paralelo  Resultado igual
+  a) Afluencia por estaci├│n              205,0 ms      61,7 ms  SI
+  b) Horas pico                          111,0 ms      32,9 ms  SI
+  c) Rutas m├ís utilizadas                114,4 ms      26,5 ms  SI
+  d) Patrones por usuario                672,0 ms     557,7 ms  SI
+  e) Tiempo promedio entre estaciones    1046,9 ms     519,4 ms  SI
+  f) Sobrecarga en rutas                 123,5 ms      31,6 ms  SI
